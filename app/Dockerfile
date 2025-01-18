@@ -6,9 +6,9 @@ COPY requirements.txt /app/
 
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY . /app/
+COPY . /my_app/
 
 EXPOSE 3000
 EXPOSE 6000
 
-CMD ["python", "server.py"]
+CMD ["python", "app.py"]

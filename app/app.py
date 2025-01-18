@@ -27,7 +27,7 @@ class HttpHandler(BaseHTTPRequestHandler):
             self.send_html_file("templates/index.html")
         elif parsed_url.path == "/message.html":
             self.send_html_file("templates/message.html")
-        elif parsed_url.path == "/read":
+        elif parsed_url.path == "/history.html":
             self.show_messages()
         elif parsed_url.path == "/success.html":
             self.send_html_file("templates/success.html")
@@ -114,7 +114,7 @@ class HttpHandler(BaseHTTPRequestHandler):
     def show_messages(self):
         """Render and display the saved messages on the read page."""
         env = Environment(loader=FileSystemLoader("templates"))
-        template = env.get_template("read.html")
+        template = env.get_template("history.html")
 
         try:
             with open(DATA_FILE, "r") as file:
@@ -122,9 +122,15 @@ class HttpHandler(BaseHTTPRequestHandler):
         except (FileNotFoundError, json.JSONDecodeError):
             messages = {}
 
+        # Format the timestamps to only show hour and minute
+        formatted_messages = {
+            datetime.strptime(ts, "%Y-%m-%d %H:%M:%S.%f").strftime("%H:%M"): content
+            for ts, content in messages.items()
+        }
+
         logging.info(f"Loaded {len(messages)} messages from {DATA_FILE}")
 
-        html_content = template.render(messages=messages)
+        html_content = template.render(messages=formatted_messages)
 
         self.send_response(200)
         self.send_header("Content-type", "text/html")

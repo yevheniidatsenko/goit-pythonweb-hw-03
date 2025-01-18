@@ -111,6 +111,8 @@ class HttpHandler(BaseHTTPRequestHandler):
         with open(DATA_FILE, "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
 
+        logging.info(f"Saved message: {message_data}")
+
     def show_messages(self):
         """Render and display the saved messages on the read page."""
         env = Environment(loader=FileSystemLoader("templates"))
@@ -129,6 +131,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         }
 
         logging.info(f"Loaded {len(messages)} messages from {DATA_FILE}")
+        logging.debug(f"Messages: {formatted_messages}")
 
         html_content = template.render(messages=formatted_messages)
 
